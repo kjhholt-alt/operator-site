@@ -25,7 +25,8 @@ export default async function OpsRepliesPage() {
     sent_7d: 0,
   };
   const mirroredAvailable = mirrored !== null;
-  const rows: DisplayRow[] = mirroredAvailable
+  const mirroredHasRows = (mirrored?.length ?? 0) > 0;
+  const rows: DisplayRow[] = mirroredHasRows
     ? (mirrored as ReplyThreadRow[]).map((r) => ({
         thread_id: r.thread_id,
         sender: r.sender_name || r.sender_email,
@@ -101,6 +102,15 @@ export default async function OpsRepliesPage() {
             Showing the latest 3 threads from the daemon snapshot. Once
             the daemon starts writing to <code>outreach_reply_threads</code>,
             this view expands to every thread automatically.
+          </div>
+        )}
+
+        {mirroredAvailable && !mirroredHasRows && (snapshotRow?.payload.recent_replies?.length ?? 0) > 0 && (
+          <div className="panel p-4 mb-6 mono text-[11px] text-[color:var(--muted)] italic leading-snug">
+            [note] The Supabase reply mirror is reachable but empty, so this
+            page is falling back to the daemon snapshot instead of blanking
+            the inbox. Once the daemon mirror sync catches up, the full thread
+            list resumes automatically.
           </div>
         )}
 
