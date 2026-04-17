@@ -60,6 +60,14 @@ export type SnapshotCostPoint = {
   jobs: number;
 };
 
+export type SnapshotRevenueEntry = {
+  slug: string;
+  signups_7d: number;
+  active_users_7d: number;
+  paying_7d: number;
+  mrr_usd: number;
+};
+
 export type SnapshotPayload = {
   schema_version?: number;
   generated_at: string;
@@ -72,6 +80,8 @@ export type SnapshotPayload = {
     cost_7d_usd?: number;
     tasks_enabled?: number;
     tasks_total?: number;
+    // v3 fields (optional for backward compat with v2 snapshots):
+    mrr_7d_usd?: number;
   };
   watchdog: WatchdogSection[];
   jobs: SnapshotJob[];
@@ -86,6 +96,8 @@ export type SnapshotPayload = {
   tasks?: SnapshotTask[];
   git_activity?: SnapshotGitActivity[];
   cost_series_7d?: SnapshotCostPoint[];
+  // v3-only, may be absent on older snapshots.
+  revenue_7d?: SnapshotRevenueEntry[];
 };
 
 export type SnapshotRow = {

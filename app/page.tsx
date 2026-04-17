@@ -2,6 +2,7 @@ import Link from "next/link";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { FeatureGrid } from "@/components/feature-grid";
 import { StatusBar } from "@/components/status-bar";
+import { BeforeAfter } from "@/components/before-after";
 
 export default function Home() {
   return (
@@ -86,6 +87,9 @@ export default function Home() {
           </h2>
           <FeatureGrid />
         </section>
+
+        {/* Before / After */}
+        <BeforeAfter />
 
         {/* How it works */}
         <section className="mb-20">

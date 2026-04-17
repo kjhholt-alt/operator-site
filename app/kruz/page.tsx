@@ -9,6 +9,7 @@ import { TasksPanel } from "@/components/kruz/tasks-panel";
 import { GitHeartbeat } from "@/components/kruz/git-heartbeat";
 import { SpendSparkline } from "@/components/kruz/spend-sparkline";
 import { HeroSummary } from "@/components/kruz/hero-summary";
+import { RevenueHeartbeat } from "@/components/kruz/revenue-heartbeat";
 import {
   fetchLatestSnapshot,
   snapshotAgeMinutes,
@@ -62,6 +63,7 @@ export default async function KruzPage() {
   const tasksEnabled = snapshot.summary.tasks_enabled ?? 0;
   const tasksTotal = snapshot.summary.tasks_total ?? (snapshot.tasks?.length ?? 0);
   const cost7d = snapshot.summary.cost_7d_usd ?? 0;
+  const mrr7d = snapshot.summary.mrr_7d_usd ?? 0;
   const nodeLabel = live ? "KRUZ" : stale ? "KRUZ-STALE" : "KRUZ-OFFLINE";
 
   return (
@@ -104,6 +106,7 @@ export default async function KruzPage() {
           tasksEnabled={tasksEnabled}
           tasksTotal={tasksTotal}
           cost7dUsd={cost7d}
+          mrr7dUsd={mrr7d}
         />
 
         {/* Watchdog + deploy health row */}
@@ -136,6 +139,10 @@ export default async function KruzPage() {
             cost7dUsd={snapshot.summary.cost_7d_usd}
             cost24hUsd={snapshot.summary.cost_24h_usd}
           />
+        </section>
+
+        <section className="grid grid-cols-1 gap-4 mb-6">
+          <RevenueHeartbeat rows={snapshot.revenue_7d ?? []} />
         </section>
 
         <section className="grid grid-cols-1 gap-4 mb-6">

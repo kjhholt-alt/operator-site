@@ -6,6 +6,7 @@ type Props = {
   tasksEnabled: number;
   tasksTotal: number;
   cost7dUsd: number;
+  mrr7dUsd?: number;
 };
 
 export function HeroSummary({
@@ -14,14 +15,20 @@ export function HeroSummary({
   tasksEnabled,
   tasksTotal,
   cost7dUsd,
+  mrr7dUsd,
 }: Props) {
+  const showMrr = typeof mrr7dUsd === "number" && mrr7dUsd > 0;
   return (
     <section className="panel bracket-corners p-6 md:p-8 mb-6">
       <div className="eyebrow mb-4 flex items-center gap-2">
         <span className="pip pip-ok scan-pulse" />
         LIVE SUMMARY / LAST 24h &amp; 7d
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+      <div
+        className={`grid grid-cols-2 ${
+          showMrr ? "md:grid-cols-5" : "md:grid-cols-4"
+        } gap-6 md:gap-8`}
+      >
         <Stat
           label="PROJECTS WATCHED"
           value={
@@ -60,6 +67,20 @@ export function HeroSummary({
           }
           caption="What the daemon costs you to run."
         />
+        {showMrr && (
+          <Stat
+            label="MRR / 7d"
+            value={
+              <CountUp
+                value={mrr7dUsd as number}
+                decimals={0}
+                prefix="$"
+                className="mono"
+              />
+            }
+            caption="What the portfolio earns today."
+          />
+        )}
       </div>
     </section>
   );

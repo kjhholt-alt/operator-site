@@ -141,6 +141,7 @@ export default function PitchPage() {
                 "Detects no-contact windows, missed renewals, stalled invoices.",
                 "Drafts the right nudge — service reminder, seasonal check-in, referral ask.",
                 "Flags the 3 accounts most likely to churn this week.",
+                "See a live mockup at /demo/pools.",
               ]}
             />
             <UseCase
