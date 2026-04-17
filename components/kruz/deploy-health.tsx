@@ -12,6 +12,9 @@ export function DeployHealth({ deploys, live }: Props) {
         <div>
           <div className="eyebrow mb-1">DEPLOY HEALTH</div>
           <h3 className="text-lg font-semibold">{deploys.length} SERVICES</h3>
+          <p className="mono text-[11px] text-[color:var(--muted)] italic mt-1">
+            Each production URL, HTTP-pinged from the daemon.
+          </p>
         </div>
         <div className="mono text-[10px] tracking-wider text-[color:var(--muted)] flex items-center gap-2">
           <span

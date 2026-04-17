@@ -11,6 +11,9 @@ export function PortfolioRoster({ roster }: Props) {
         <div>
           <div className="eyebrow mb-1">PORTFOLIO</div>
           <h3 className="text-lg font-semibold">{roster.length} WATCHED</h3>
+          <p className="mono text-[11px] text-[color:var(--muted)] italic mt-1">
+            Projects the daemon watches — tier and auto-merge policy.
+          </p>
         </div>
         <div className="mono text-[10px] tracking-wider text-[color:var(--muted)]">
           config.toml

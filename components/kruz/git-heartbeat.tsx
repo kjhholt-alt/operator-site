@@ -19,7 +19,7 @@ export function GitHeartbeat({
   const total = rows.reduce((s, r) => s + r.commits_7d, 0);
   return (
     <div className="panel bracket-corners p-5">
-      <header className="flex items-center justify-between mb-3">
+      <header className="flex items-center justify-between mb-1">
         <div className="eyebrow flex items-center gap-2">
           <span className="pip pip-ok" />
           GIT HEARTBEAT / 7d
@@ -28,6 +28,9 @@ export function GitHeartbeat({
           {total} COMMITS
         </div>
       </header>
+      <p className="mono text-[11px] text-[color:var(--muted)] italic mb-3">
+        What code moved where in the last 7 days — sorted by commits.
+      </p>
       {rows.length === 0 ? (
         <p className="mono text-xs text-[color:var(--muted)]">
           (snapshot predates git-activity section — next publish will populate)

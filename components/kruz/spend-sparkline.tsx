@@ -29,7 +29,7 @@ export function SpendSparkline({
 
   return (
     <div className="panel bracket-corners p-5">
-      <header className="flex items-center justify-between mb-3">
+      <header className="flex items-center justify-between mb-1">
         <div className="eyebrow flex items-center gap-2">
           <span className="pip pip-ok" />
           CLAUDE SPEND / 7d
@@ -38,6 +38,9 @@ export function SpendSparkline({
           ${total7d.toFixed(2)} TOTAL
         </div>
       </header>
+      <p className="mono text-[11px] text-[color:var(--muted)] italic mb-3">
+        Claude bill for the last week — what the daemon costs to run.
+      </p>
 
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}

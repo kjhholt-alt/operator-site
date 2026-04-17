@@ -5,7 +5,7 @@ export function TasksPanel({ tasks }: { tasks?: SnapshotTask[] }) {
   const enabled = rows.filter((t) => t.enabled).length;
   return (
     <div className="panel bracket-corners p-5">
-      <header className="flex items-center justify-between mb-3">
+      <header className="flex items-center justify-between mb-1">
         <div className="eyebrow flex items-center gap-2">
           <span className="pip pip-ok" />
           SCHEDULED TASKS
@@ -14,6 +14,9 @@ export function TasksPanel({ tasks }: { tasks?: SnapshotTask[] }) {
           {enabled}/{rows.length} ENABLED
         </div>
       </header>
+      <p className="mono text-[11px] text-[color:var(--muted)] italic mb-3">
+        Daily rituals Operator runs on its own — briefing, PR review, deploy check.
+      </p>
       {rows.length === 0 ? (
         <p className="mono text-xs text-[color:var(--muted)]">
           (snapshot predates tasks panel — next publish will populate)

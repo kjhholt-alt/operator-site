@@ -18,6 +18,9 @@ export function JobFeed({ jobs, cost24h, live }: Props) {
               24h cost ${cost24h.toFixed(2)}
             </span>
           </h3>
+          <p className="mono text-[11px] text-[color:var(--muted)] italic mt-1">
+            Every Claude agent run — action, project, outcome, cost.
+          </p>
         </div>
         <div className="mono text-[10px] tracking-wider text-[color:var(--muted)] flex items-center gap-2">
           <span

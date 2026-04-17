@@ -22,6 +22,9 @@ export function WatchdogPanel({ sections, live }: Props) {
               {okCount} OK · {staleCount} STALE
             </span>
           </h3>
+          <p className="mono text-[11px] text-[color:var(--muted)] italic mt-1">
+            Is the daemon still writing status files? Fresh = alive.
+          </p>
         </div>
         <div className="mono text-[10px] tracking-wider text-[color:var(--muted)] flex items-center gap-2">
           <span

@@ -8,6 +8,7 @@ import { RecentSprint } from "@/components/kruz/recent-sprint";
 import { TasksPanel } from "@/components/kruz/tasks-panel";
 import { GitHeartbeat } from "@/components/kruz/git-heartbeat";
 import { SpendSparkline } from "@/components/kruz/spend-sparkline";
+import { HeroSummary } from "@/components/kruz/hero-summary";
 import {
   fetchLatestSnapshot,
   snapshotAgeMinutes,
@@ -56,13 +57,20 @@ export default async function KruzPage() {
   const live = !!row && ageMinutes < 120;
   const stale = !!row && ageMinutes >= 120;
 
+  const projects = snapshot.summary.projects ?? 0;
+  const jobs24h = snapshot.summary.jobs_24h ?? 0;
+  const tasksEnabled = snapshot.summary.tasks_enabled ?? 0;
+  const tasksTotal = snapshot.summary.tasks_total ?? (snapshot.tasks?.length ?? 0);
+  const cost7d = snapshot.summary.cost_7d_usd ?? 0;
+  const nodeLabel = live ? "KRUZ" : stale ? "KRUZ-STALE" : "KRUZ-OFFLINE";
+
   return (
     <div className="relative z-10 flex flex-col min-h-screen">
-      <StatusBar />
+      <StatusBar node={nodeLabel} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 md:py-12">
         {/* Header */}
-        <section className="mb-10 flex items-center justify-between flex-wrap gap-4">
+        <section className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>
             <div className="eyebrow mb-2 flex items-center gap-3">
               <span
@@ -89,6 +97,14 @@ export default async function KruzPage() {
             &lt;- HOME
           </Link>
         </section>
+
+        <HeroSummary
+          projects={projects}
+          jobs24h={jobs24h}
+          tasksEnabled={tasksEnabled}
+          tasksTotal={tasksTotal}
+          cost7dUsd={cost7d}
+        />
 
         {/* Watchdog + deploy health row */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
@@ -131,25 +147,53 @@ export default async function KruzPage() {
           <RecentSprint />
         </section>
 
-        <footer className="mt-12 pt-6 border-t border-[color:var(--border)] mono text-xs text-[color:var(--muted)] flex flex-wrap items-center justify-between gap-4">
-          <div>
-            {live
-              ? "LIVE // REVALIDATES 60s"
-              : stale
-                ? "SNAPSHOT STALE // CHECK DAEMON"
-                : "WAITING ON FIRST SNAPSHOT"}
+        <footer className="mt-12 pt-6 border-t border-[color:var(--border)] mono text-xs text-[color:var(--muted)]">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <span
+                className={`pip ${
+                  live ? "pip-ok scan-pulse" : stale ? "pip-warn" : "pip-idle"
+                }`}
+              />
+              <span>
+                {live
+                  ? "LIVE // REVALIDATES 60s"
+                  : stale
+                    ? "SNAPSHOT STALE // CHECK DAEMON"
+                    : "WAITING ON FIRST SNAPSHOT"}
+              </span>
+            </div>
+            <div className="flex gap-3 md:gap-4 items-center flex-wrap">
+              <Link
+                href="https://github.com/kjhholt-alt/operator-core"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-[color:var(--accent)]/50 hover:border-[color:var(--accent)] hover:bg-[color:var(--accent)]/10 text-[color:var(--accent-bright)] no-underline rounded-sm tracking-wider transition-colors"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="pip pip-ok" />
+                BUILT IN PUBLIC // STAR SOURCE
+              </Link>
+              <Link
+                href="/docs"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-[color:var(--border)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent-bright)] no-underline rounded-sm tracking-wider transition-colors"
+              >
+                READ THE DOCS -&gt;
+              </Link>
+              <Link
+                href="/pitch"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-[color:var(--border)] hover:border-[color:var(--accent)] hover:text-[color:var(--accent-bright)] no-underline rounded-sm tracking-wider transition-colors"
+              >
+                WHAT&apos;S THE PITCH?
+              </Link>
+            </div>
           </div>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 text-[10px] tracking-wider">
+            <span>
+              OPERATOR / v0.1.0 / PRE-ALPHA — self-hosted, MIT-licensed, no
+              vendor lock-in.
+            </span>
             <Link href="/" className="hover:text-[color:var(--accent)]">
-              HOME
-            </Link>
-            <Link
-              href="https://github.com/kjhholt-alt/operator-core"
-              className="hover:text-[color:var(--accent)]"
-              target="_blank"
-              rel="noreferrer"
-            >
-              SOURCE
+              &lt;- HOME
             </Link>
           </div>
         </footer>

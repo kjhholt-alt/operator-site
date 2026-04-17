@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-export function StatusBar() {
+type StatusBarProps = {
+  node?: string;
+};
+
+export function StatusBar({ node = "OPERATOR-PRIMARY" }: StatusBarProps) {
   const [time, setTime] = useState<string>("");
 
   useEffect(() => {
@@ -29,7 +33,7 @@ export function StatusBar() {
         </div>
         <div className="flex items-center gap-6">
           <span className="hidden md:inline">UTC {time}</span>
-          <span>NODE // OPERATOR-PRIMARY</span>
+          <span>NODE // {node}</span>
         </div>
       </div>
     </div>
