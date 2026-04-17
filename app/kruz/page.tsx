@@ -5,18 +5,54 @@ import { JobFeed } from "@/components/kruz/job-feed";
 import { DeployHealth } from "@/components/kruz/deploy-health";
 import { PortfolioRoster } from "@/components/kruz/portfolio-roster";
 import { RecentSprint } from "@/components/kruz/recent-sprint";
+import {
+  fetchLatestSnapshot,
+  snapshotAgeMinutes,
+  type SnapshotPayload,
+} from "@/lib/snapshot";
 
 export const metadata = {
-  title: "Operator // KRUZ — live portfolio broadcast",
+  title: "Operator // KRUZ - live portfolio broadcast",
   description:
     "The daemon running in production on one founder's actual multi-project portfolio.",
 };
 
-// Sprint 1 ships with SNAPSHOT data. Sprint 2 wires this to the live daemon
-// via a published snapshot JSON. Keeping the component interface stable so
-// the swap is mechanical.
+// Refresh the rendered snapshot every 60s. The publisher on Kruz's machine
+// writes a new row on whatever cadence it's scheduled for (~30 min).
+export const revalidate = 60;
 
-export default function KruzPage() {
+const FALLBACK: SnapshotPayload = {
+  generated_at: new Date().toISOString(),
+  summary: {
+    projects: 0,
+    tracked_sections: 0,
+    jobs_24h: 0,
+    cost_24h_usd: 0,
+  },
+  watchdog: [],
+  jobs: [],
+  deploy_health: [],
+  portfolio: [],
+  daemon: { pid: null, started_at: null, uptime_sec: 0 },
+};
+
+function formatAge(minutes: number): string {
+  if (!isFinite(minutes) || minutes < 0) return "offline";
+  if (minutes < 1) return "< 1m ago";
+  if (minutes < 60) return `${Math.floor(minutes)}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ${Math.floor(minutes % 60)}m ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ${hours % 24}h ago`;
+}
+
+export default async function KruzPage() {
+  const row = await fetchLatestSnapshot("kruz");
+  const snapshot = row?.payload ?? FALLBACK;
+  const ageMinutes = row ? snapshotAgeMinutes(row.published_at) : Infinity;
+  const live = !!row && ageMinutes < 120;
+  const stale = !!row && ageMinutes >= 120;
+
   return (
     <div className="relative z-10 flex flex-col min-h-screen">
       <StatusBar />
@@ -26,20 +62,27 @@ export default function KruzPage() {
         <section className="mb-10 flex items-center justify-between flex-wrap gap-4">
           <div>
             <div className="eyebrow mb-2 flex items-center gap-3">
-              <span className="pip pip-ok scan-pulse" />
-              LIVE BROADCAST / OPERATOR NODE
+              <span
+                className={`pip ${
+                  live ? "pip-ok scan-pulse" : stale ? "pip-warn" : "pip-idle"
+                }`}
+              />
+              {live ? "LIVE BROADCAST" : stale ? "SNAPSHOT STALE" : "OFFLINE"} /
+              OPERATOR NODE
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
               /kruz
             </h1>
             <p className="text-sm text-[color:var(--muted)] mt-1 mono">
-              ONE FOUNDER. 15 PROJECTS. ONE DAEMON.
+              ONE FOUNDER. {snapshot.summary.projects || "—"} PROJECTS. ONE DAEMON.
+            </p>
+            <p className="text-xs text-[color:var(--muted)] mt-1 mono">
+              {row
+                ? `LAST SNAPSHOT ${formatAge(ageMinutes)}`
+                : "NO SNAPSHOT AVAILABLE"}
             </p>
           </div>
-          <Link
-            href="/"
-            className="btn-ghost no-underline"
-          >
+          <Link href="/" className="btn-ghost no-underline">
             &lt;- HOME
           </Link>
         </section>
@@ -47,17 +90,21 @@ export default function KruzPage() {
         {/* Watchdog + deploy health row */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
           <div className="lg:col-span-2">
-            <WatchdogPanel />
+            <WatchdogPanel sections={snapshot.watchdog} live={live} />
           </div>
-          <DeployHealth />
+          <DeployHealth deploys={snapshot.deploy_health} live={live} />
         </section>
 
         {/* Job feed + portfolio roster */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
           <div className="lg:col-span-2">
-            <JobFeed />
+            <JobFeed
+              jobs={snapshot.jobs}
+              cost24h={snapshot.summary.cost_24h_usd}
+              live={live}
+            />
           </div>
-          <PortfolioRoster />
+          <PortfolioRoster roster={snapshot.portfolio} />
         </section>
 
         {/* Recent sprint */}
@@ -67,7 +114,11 @@ export default function KruzPage() {
 
         <footer className="mt-12 pt-6 border-t border-[color:var(--border)] mono text-xs text-[color:var(--muted)] flex flex-wrap items-center justify-between gap-4">
           <div>
-            SNAPSHOT MODE // LIVE SYNC COMING SPRINT 2
+            {live
+              ? "LIVE // REVALIDATES 60s"
+              : stale
+                ? "SNAPSHOT STALE // CHECK DAEMON"
+                : "WAITING ON FIRST SNAPSHOT"}
           </div>
           <div className="flex gap-6">
             <Link href="/" className="hover:text-[color:var(--accent)]">
