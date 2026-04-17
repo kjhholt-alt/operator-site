@@ -38,13 +38,40 @@ export type SnapshotPortfolioEntry = {
   auto_merge: boolean;
 };
 
+export type SnapshotTask = {
+  key: string;
+  cadence: string;
+  time: string;
+  enabled: boolean;
+  last_run: string | null;
+  description: string;
+};
+
+export type SnapshotGitActivity = {
+  slug: string;
+  commits_7d: number;
+  last_commit_iso: string | null;
+  last_commit_age: string;
+};
+
+export type SnapshotCostPoint = {
+  day: string;
+  usd: number;
+  jobs: number;
+};
+
 export type SnapshotPayload = {
+  schema_version?: number;
   generated_at: string;
   summary: {
     projects: number;
     tracked_sections: number;
     jobs_24h: number;
     cost_24h_usd: number;
+    // v2 fields (optional for backward compat with v1 snapshots):
+    cost_7d_usd?: number;
+    tasks_enabled?: number;
+    tasks_total?: number;
   };
   watchdog: WatchdogSection[];
   jobs: SnapshotJob[];
@@ -55,6 +82,10 @@ export type SnapshotPayload = {
     started_at: string | null;
     uptime_sec: number;
   };
+  // v2-only, may be absent on older snapshots.
+  tasks?: SnapshotTask[];
+  git_activity?: SnapshotGitActivity[];
+  cost_series_7d?: SnapshotCostPoint[];
 };
 
 export type SnapshotRow = {

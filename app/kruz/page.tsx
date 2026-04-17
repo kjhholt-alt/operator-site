@@ -5,6 +5,9 @@ import { JobFeed } from "@/components/kruz/job-feed";
 import { DeployHealth } from "@/components/kruz/deploy-health";
 import { PortfolioRoster } from "@/components/kruz/portfolio-roster";
 import { RecentSprint } from "@/components/kruz/recent-sprint";
+import { TasksPanel } from "@/components/kruz/tasks-panel";
+import { GitHeartbeat } from "@/components/kruz/git-heartbeat";
+import { SpendSparkline } from "@/components/kruz/spend-sparkline";
 import {
   fetchLatestSnapshot,
   snapshotAgeMinutes,
@@ -105,6 +108,22 @@ export default async function KruzPage() {
             />
           </div>
           <PortfolioRoster roster={snapshot.portfolio} />
+        </section>
+
+        {/* v2: tasks + git heartbeat + claude spend */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <div className="lg:col-span-2">
+            <TasksPanel tasks={snapshot.tasks} />
+          </div>
+          <SpendSparkline
+            series={snapshot.cost_series_7d}
+            cost7dUsd={snapshot.summary.cost_7d_usd}
+            cost24hUsd={snapshot.summary.cost_24h_usd}
+          />
+        </section>
+
+        <section className="grid grid-cols-1 gap-4 mb-6">
+          <GitHeartbeat activity={snapshot.git_activity} />
         </section>
 
         {/* Recent sprint */}
