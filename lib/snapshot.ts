@@ -68,6 +68,28 @@ export type SnapshotRevenueEntry = {
   mrr_usd: number;
 };
 
+export type ReplyStatus =
+  | "NEW"
+  | "DRAFTING"
+  | "READY"
+  | "SENT"
+  | "CLOSED";
+
+export type SnapshotReplySummary = {
+  unread: number;
+  drafting: number;
+  ready: number;
+  sent_7d: number;
+};
+
+export type SnapshotRecentReply = {
+  thread_id: string;
+  sender: string;
+  subject: string;
+  status: ReplyStatus;
+  last_activity_at: string;
+};
+
 export type SnapshotPayload = {
   schema_version?: number;
   generated_at: string;
@@ -82,6 +104,9 @@ export type SnapshotPayload = {
     tasks_total?: number;
     // v3 fields (optional for backward compat with v2 snapshots):
     mrr_7d_usd?: number;
+    // v4 fields (optional for backward compat with v3 snapshots):
+    replies_unread?: number;
+    replies_sent_7d?: number;
   };
   watchdog: WatchdogSection[];
   jobs: SnapshotJob[];
@@ -98,6 +123,9 @@ export type SnapshotPayload = {
   cost_series_7d?: SnapshotCostPoint[];
   // v3-only, may be absent on older snapshots.
   revenue_7d?: SnapshotRevenueEntry[];
+  // v4-only, may be absent on older snapshots.
+  replies_summary?: SnapshotReplySummary;
+  recent_replies?: SnapshotRecentReply[];
 };
 
 export type SnapshotRow = {

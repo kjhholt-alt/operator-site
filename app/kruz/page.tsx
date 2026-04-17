@@ -10,6 +10,7 @@ import { GitHeartbeat } from "@/components/kruz/git-heartbeat";
 import { SpendSparkline } from "@/components/kruz/spend-sparkline";
 import { HeroSummary } from "@/components/kruz/hero-summary";
 import { RevenueHeartbeat } from "@/components/kruz/revenue-heartbeat";
+import { RepliesPanel } from "@/components/kruz/replies-panel";
 import {
   fetchLatestSnapshot,
   snapshotAgeMinutes,
@@ -64,6 +65,7 @@ export default async function KruzPage() {
   const tasksTotal = snapshot.summary.tasks_total ?? (snapshot.tasks?.length ?? 0);
   const cost7d = snapshot.summary.cost_7d_usd ?? 0;
   const mrr7d = snapshot.summary.mrr_7d_usd ?? 0;
+  const repliesUnread = snapshot.summary.replies_unread ?? 0;
   const nodeLabel = live ? "KRUZ" : stale ? "KRUZ-STALE" : "KRUZ-OFFLINE";
 
   return (
@@ -74,7 +76,7 @@ export default async function KruzPage() {
         {/* Header */}
         <section className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <div className="eyebrow mb-2 flex items-center gap-3">
+            <div className="eyebrow mb-2 flex items-center gap-3 flex-wrap">
               <span
                 className={`pip ${
                   live ? "pip-ok scan-pulse" : stale ? "pip-warn" : "pip-idle"
@@ -82,6 +84,15 @@ export default async function KruzPage() {
               />
               {live ? "LIVE BROADCAST" : stale ? "SNAPSHOT STALE" : "OFFLINE"} /
               OPERATOR NODE
+              {repliesUnread > 0 && (
+                <Link
+                  href="/ops/replies"
+                  className="inline-flex items-center gap-2 px-2 py-0.5 border border-[color:var(--warn)] text-[color:var(--warn)] mono text-[9px] tracking-widest hover:bg-[color:var(--warn)]/10 no-underline"
+                >
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[color:var(--warn)] animate-pulse" />
+                  {repliesUnread} REPLY{repliesUnread > 1 ? "S" : ""} UNREAD
+                </Link>
+              )}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
               /kruz
@@ -138,6 +149,13 @@ export default async function KruzPage() {
             series={snapshot.cost_series_7d}
             cost7dUsd={snapshot.summary.cost_7d_usd}
             cost24hUsd={snapshot.summary.cost_24h_usd}
+          />
+        </section>
+
+        <section className="grid grid-cols-1 gap-4 mb-6">
+          <RepliesPanel
+            summary={snapshot.replies_summary}
+            recent={snapshot.recent_replies}
           />
         </section>
 
