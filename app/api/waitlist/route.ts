@@ -30,7 +30,7 @@ async function notifyDiscord(
         title: "OPERATOR / NEW WAITLIST SIGNUP",
         color: DISCORD_COLORS.accent,
         fields,
-        footer: { text: "operator.dev" },
+        footer: { text: "operator.buildkit.store" },
         timestamp: new Date().toISOString(),
       },
     ],

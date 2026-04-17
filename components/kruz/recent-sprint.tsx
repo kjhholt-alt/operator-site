@@ -41,7 +41,7 @@ export function RecentSprint() {
         <p>
           <span className="text-[color:var(--accent)]">&gt;</span> Up next:{" "}
           Vox (AI outbound calling recipe), Uncle&apos;s machine as the first
-          external operator install, operator.dev domain.
+          external operator install, operator.buildkit.store live.
         </p>
       </div>
 
