@@ -35,7 +35,6 @@ export default async function OpsRepliesPage() {
         status: r.status,
         last_activity_at: r.last_activity_at,
         dd_notes_md: r.dd_notes_md,
-        draft_preview: r.latest_draft_preview,
       }))
     : (snapshotRow?.payload.recent_replies ?? []).map(
         (r: SnapshotRecentReply) => ({
@@ -46,7 +45,6 @@ export default async function OpsRepliesPage() {
           status: r.status,
           last_activity_at: r.last_activity_at,
           dd_notes_md: "",
-          draft_preview: null,
         }),
       );
 
@@ -144,14 +142,6 @@ export default async function OpsRepliesPage() {
                     <p className="text-sm md:text-base leading-snug">
                       {r.subject}
                     </p>
-                    {r.draft_preview && (
-                      <div className="mt-3 border-l-2 border-[color:var(--accent)] pl-3 text-sm text-[color:var(--muted)] leading-relaxed">
-                        <div className="mono text-[9px] tracking-widest text-[color:var(--accent)] mb-1">
-                          DRAFT PREVIEW
-                        </div>
-                        {truncate(r.draft_preview, 240)}
-                      </div>
-                    )}
                     {r.dd_notes_md && (
                       <div className="mt-3 mono text-[11px] text-[color:var(--muted)] leading-snug whitespace-pre-wrap">
                         <span className="text-[color:var(--accent)]">
@@ -184,7 +174,6 @@ type DisplayRow = {
   status: ReplyStatus;
   last_activity_at: string;
   dd_notes_md: string;
-  draft_preview: string | null;
 };
 
 function StatBox({
